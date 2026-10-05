@@ -1,0 +1,56 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python resume-workspace/sourcing/*)",
+      "Bash(python \"resume-workspace/sourcing/*)",
+      "Bash(python3 resume-workspace/sourcing/*)",
+      "PowerShell(python resume-workspace/sourcing/*)",
+      "PowerShell(python \"resume-workspace/sourcing/*)",
+      "Bash(python resume-workspace/smoke_test.py*)",
+      "Bash(python3 resume-workspace/smoke_test.py*)",
+      "PowerShell(python resume-workspace/smoke_test.py*)",
+      "Bash(git status*)",
+      "Bash(git add*)",
+      "Bash(git commit*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "PowerShell(git status*)",
+      "PowerShell(git add*)",
+      "PowerShell(git commit*)",
+      "PowerShell(git diff*)",
+      "PowerShell(git log*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/check_output.py\""
+          },
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/selftest_gate.py\""
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard_render.py\""
+          },
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/verify_render.py\""
+          }
+        ]
+      }
+    ]
+  }
+}

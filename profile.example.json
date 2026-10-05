@@ -1,0 +1,733 @@
+{
+  "_help": "Your personal settings. Copy this file to profile.json (which is gitignored) and replace Alex Example's values with yours. Keys starting with an underscore are notes; the code ignores them. Sections: person and lanes (who you are, your two general resumes), summaryLock and gates (resume checks), search, scoring, pay and board (the job sweep).",
+  "person": {
+    "_help": "Who the kit works for. fileNamePrefix starts every output file name.",
+    "name": "Alex Example",
+    "fileNamePrefix": "Alex_Example"
+  },
+  "lanes": {
+    "_help": "Resume lanes. A tailored config belongs to the lane whose configPrefix its file name starts with; the longest non-empty prefix wins and the lane with an empty prefix is the default. generalResume is the untailored resume for that lane.",
+    "TAC": {
+      "label": "Delivery (hands-on program and project roles)",
+      "configPrefix": "tac-",
+      "generalResume": "Alex_Example_General_Delivery.docx"
+    },
+    "STRAT": {
+      "label": "Strategic (senior and principal program roles)",
+      "configPrefix": "",
+      "generalResume": "Alex_Example_General_Strategic.docx"
+    }
+  },
+  "summaryLock": {
+    "_help": "Optional. Locks the MEANING of one summary sentence (the sentence you want on every resume) through required phrases, while the words around them stay free. Off by default. When enabled it also applies the ceilings below. Configs whose name starts with a prefix in gates.summaryExemptConfigPrefixes skip it.",
+    "enabled": false,
+    "label": "SUMMARY LOCK",
+    "sentence": 2,
+    "description": "the operating promise: one plan for the whole effort, and leadership sees risk early",
+    "requiredPhrases": [
+      "one plan",
+      "leadership sees risk early"
+    ],
+    "requiredAnyOf": [
+      {
+        "_help": "At least one of anyOf must appear. A jdConditional phrase also satisfies the group, but only when this job's JD contains jdWord.",
+        "anyOf": [
+          "status review",
+          "program review"
+        ],
+        "missingLabel": "a review mechanism ('status review' or 'program review')",
+        "jdConditional": [
+          {
+            "phrase": "operating review",
+            "jdWord": "operating review"
+          }
+        ]
+      }
+    ],
+    "lanes": {
+      "_help": "Extra rules per lane (keys match the lanes above): requiredPhrases, requiredAnyOf, warnIfMissing [{phrase, message}], forbidPatterns [{regex, message}]. referenceSentence is your approved wording, kept for whoever writes the summary; it is not enforced.",
+      "STRAT": {
+        "referenceSentence": "Keeps each effort on one plan, one dependency map, and one status review, so builders stay focused and leadership sees risk early."
+      },
+      "TAC": {
+        "forbidPatterns": [
+          {
+            "regex": "\\d[\\d,]*\\+?\\s*engineers",
+            "message": "SUMMARY LOCK (delivery lane): no org size in the locked sentence; put scale in the proof sentence as a program number."
+          }
+        ]
+      }
+    },
+    "maxWords": 30,
+    "maxLists": 2,
+    "regionNames": [
+      "US",
+      "U.S.",
+      "USA",
+      "EU",
+      "Europe",
+      "EMEA",
+      "APAC"
+    ],
+    "proofKeywordCap": 6,
+    "proofKeywordExempt": [
+      "program management",
+      "program manager"
+    ],
+    "rereadExemptWords": []
+  },
+  "gates": {
+    "_help": "Tunable thresholds for the resume gates. Leave a key out to keep the default shown here.",
+    "summaryWords": {
+      "targetMin": 50,
+      "targetMax": 70,
+      "hardMax": 75
+    },
+    "atsFloor": 0.85,
+    "deEchoWords": 4,
+    "summaryExemptConfigPrefixes": [
+      "SUBMITTED-"
+    ],
+    "rereadExemptWords": [],
+    "coverLetterMaxWords": 220,
+    "answerMaxWords": 110
+  },
+  "search": {
+    "_help": "Where and what to search. The guest sweep, the logged-in harvester, ingest and the board gate all read this.",
+    "_help_coreKeywords": "Job titles to search, one LinkedIn search per entry. Every harvest batch in a region with requireCoreKeywords must use ALL of them, or ingest refuses it and the board gate blocks. A product designer might use [\"product designer\", \"ux designer\", \"ui designer\"]; a software engineer [\"software engineer\", \"backend engineer\", \"platform engineer\"].",
+    "coreKeywords": [
+      "technical program manager",
+      "program manager",
+      "project manager"
+    ],
+    "_help_guestSweepRegion": "Which entry of regions the no-login guest sweep (daily_sweep.py) searches.",
+    "guestSweepRegion": "US",
+    "_help_regions": "One entry per search region. The kit knows two region codes: US, and EU (which means every location outside the United States). geoIds = LinkedIn location ids the harvester loops (103644278 = United States; 91000000 = European Union). guestLocation = the location text the guest sweep sends. requiredWorkplace = the workplace filter every batch must use (remote, hybrid or onsite); local-market tokens below are also accepted. requireCoreKeywords = batches must use all coreKeywords. gateChecksManifests = verify_board also re-checks every stored batch manifest of this region (set false only for a region whose oldest batches predate these rules). Optional keywords = an extra keyword set for this region's harvest.",
+    "regions": {
+      "US": {
+        "geoIds": [
+          "103644278"
+        ],
+        "guestLocation": "United States",
+        "requiredWorkplace": "remote",
+        "requireCoreKeywords": true,
+        "gateChecksManifests": true
+      }
+    },
+    "_help_localMarkets": "Places where you WOULD take a hybrid or onsite role (a commutable city). Everywhere else hybrid and onsite postings are dropped. Each entry: code (short, uppercase, becomes the row token CODE-HYB / CODE-ONSITE and the ingest --workplace value code-hyb / code-onsite), region (US or EU), locationRegex (matches the posting's location text), workplaces ([\"hybrid\"] or [\"hybrid\", \"onsite\"]), and optional harvest notes (geoIds, a locationFilter regex for the harvester). Example entry: {\"code\": \"AUSTIN\", \"region\": \"US\", \"locationRegex\": \"\\\\baustin\\\\b\", \"workplaces\": [\"hybrid\", \"onsite\"]}. Leave empty for remote-only.",
+    "localMarkets": []
+  },
+  "scoring": {
+    "_help": "How a posting is judged. classify reads only title + company (before any JD is fetched); evaluate scores the JD text; laneRules picks the resume lane; jAxis estimates how well your Career Bank covers the JD. The defaults suit PM / TPM roles; another job family should rewrite the title regexes (juniorTitleRegex, offLaneTitleRegex, inLaneTitleRegex, laneRules) and the strengths.",
+    "_help_hardWallRegex": "Title words that make a role un-appliable no matter who posts it (domain or clearance walls). Classify skips them, the board gate blocks if one is live, and the J axis treats them as gaps. Remove a wall if that domain is actually yours (e.g. a healthcare PM).",
+    "hardWallRegex": [
+      "healthcare",
+      "health care",
+      "medical",
+      "clinical",
+      "pharma",
+      "biotech",
+      "oncology",
+      "nurse",
+      "dental",
+      "hospital",
+      "construction",
+      "civil engineer",
+      "electrical engineer",
+      "data center build",
+      "datacenter construction",
+      "factory",
+      "plant manager",
+      "manufactur",
+      "supply chain",
+      "procurement",
+      "compensation program",
+      "payroll",
+      "benefits program",
+      "clearance",
+      "cleared",
+      "top secret"
+    ],
+    "classify": {
+      "_help": "Title/company rules, applied in this order: hard wall, watchlist, blocklist, aggregators, gig, junior, domain wall, out-of-field, off-lane, director-outside-lane, product company, agency.",
+      "_help_watchlist": "Companies you always want to see (lowercase, substring match). Their rows are always kept and scored, and a hard-fail in the JD becomes a visible FLAG instead of a silent PASS. Hard walls still apply. Example: [\"acme robotics\", \"globex\"].",
+      "watchlist": [],
+      "_help_blocklist": "Companies (lowercase substring) you never want: skipped as blocklist. Defaults are staffing firms.",
+      "blocklist": [
+        "kforce",
+        "insight global",
+        "akkodis",
+        "motion recruitment",
+        "robert half"
+      ],
+      "_help_aggregators": "Job-board reposters (lowercase substring): skipped.",
+      "aggregators": [
+        "jobgether"
+      ],
+      "_help_gigCompanies": "Gig / expert-network funnels (lowercase substring): skipped, together with gigTitleRegex titles.",
+      "gigCompanies": [
+        "crossing hurdles",
+        "turing",
+        "ethos"
+      ],
+      "gigTitleRegex": "expert opportunity",
+      "_help_agencyCompanyRegex": "Company-name shapes that look like an agency: unknown companies matching it are labelled agency-shaped.",
+      "agencyCompanyRegex": [
+        "staffing",
+        "recruit",
+        "talent",
+        "consult",
+        "hcm",
+        "solutions",
+        "resources",
+        "hunter",
+        "swoon",
+        "aquent",
+        "medix",
+        "mondo",
+        "airswift",
+        "aditi",
+        "akraya",
+        "varite",
+        "bayone",
+        "highbrow",
+        "yochana",
+        "qualis",
+        "kelly",
+        "tapfin",
+        "stott",
+        "sage group",
+        "seneca",
+        "migso",
+        "xcelligen",
+        "vrk",
+        "remotehunter",
+        "workgenius",
+        "acro",
+        "partnership"
+      ],
+      "_help_juniorTitleRegex": "Titles below your level: skipped. An engineer might use [\"intern\", \"junior\", \"entry\", \"engineer i$\"].",
+      "juniorTitleRegex": [
+        "coordinator",
+        "assistant",
+        "associate(?! director)",
+        "intermediate",
+        "junior",
+        "entry",
+        "virtual assistant",
+        "manager i$",
+        "manager ii$"
+      ],
+      "_help_domainWall": "A domain you do not work in: titleRegex (title words) and companyRegex (employers) are skipped with the given label. Defaults wall off healthcare and payers.",
+      "domainWall": {
+        "label": "healthcare wall",
+        "titleRegex": [
+          "medicare",
+          "healthcare",
+          "pharma",
+          "oncology",
+          "clinical",
+          "payer",
+          "federal health",
+          "medtech",
+          "life sciences",
+          "care partners",
+          "medical",
+          "health\\b",
+          "nurse",
+          "dental"
+        ],
+        "companyRegex": [
+          "humana",
+          "molina",
+          "cvs",
+          "aetna",
+          "cigna",
+          "unitedhealth",
+          "optum",
+          "centene",
+          "elevance",
+          "anthem",
+          "kaiser",
+          "highmark",
+          "bcbs",
+          "blue cross",
+          "wellcare",
+          "davita",
+          "hca\\b",
+          "resmed",
+          "modmed"
+        ]
+      },
+      "_help_outOfFieldRegex": "Out-of-field words checked in the title AND the company (outOfFieldRegex) or the title only (outOfFieldTitleRegex). A designer must remove design program, brand and creative from outOfFieldTitleRegex.",
+      "outOfFieldRegex": [
+        "data center",
+        "soc physical",
+        "power delivery",
+        "lunar",
+        "violence",
+        "workplace strategy",
+        "sustainab",
+        "packaging",
+        "energy",
+        "solar",
+        "government services",
+        "electrical",
+        "industrial",
+        "construction",
+        "waste",
+        "warehouse",
+        "logistics"
+      ],
+      "outOfFieldTitleRegex": [
+        "factory",
+        "plant\\b",
+        "manufactur",
+        "planner",
+        "supply chain",
+        "procurement",
+        "compensation",
+        "payroll",
+        "benefits",
+        "federal",
+        "cleared",
+        "clearance",
+        "top secret",
+        "missionforce",
+        "design program",
+        "brand",
+        "creative",
+        "civil engineer",
+        "electrical engineer",
+        "construction",
+        "trail"
+      ],
+      "_help_offLaneTitleRegex": "Titles in your field but the wrong lane (e.g. marketing project manager): skipped as off-lane.",
+      "offLaneTitleRegex": [
+        "marketing",
+        "creative",
+        "digital project",
+        "onboarding",
+        "customer experience",
+        "cs operations",
+        "implementation",
+        "wellness",
+        "video",
+        "tiktok",
+        "mdm",
+        "launch manager",
+        "leadership programs",
+        "events"
+      ],
+      "_help_directorTitleRegex": "Director-level titles are skipped unless they also match inLaneTitleRegex (your lane's words).",
+      "directorTitleRegex": "director|head of",
+      "inLaneTitleRegex": "(technical program|program management|pmo|it program|project management|delivery|transformation|strategic program)",
+      "_help_productCompanies": "Known product companies (lowercase substring). A senior title there is TAILORED, any other title GENERIC; unknown companies are GENERIC-B. Add the employers you know.",
+      "productCompanies": [
+        "stripe",
+        "coinbase",
+        "nvidia",
+        "docusign",
+        "square",
+        "autodesk",
+        "cisco",
+        "meta",
+        "amazon",
+        "google",
+        "microsoft",
+        "airbnb",
+        "atlassian",
+        "datadog",
+        "snowflake",
+        "gitlab",
+        "hashicorp",
+        "cloudflare",
+        "twilio",
+        "okta",
+        "zoom",
+        "dropbox",
+        "reddit",
+        "roblox",
+        "affirm",
+        "chime",
+        "plaid",
+        "brex",
+        "ramp",
+        "rippling",
+        "gusto",
+        "hubspot",
+        "red hat",
+        "redhat",
+        "salesforce",
+        "intuit",
+        "paypal",
+        "servicenow",
+        "uber",
+        "lyft",
+        "netflix",
+        "apple",
+        "ibm",
+        "vmware",
+        "elastic",
+        "mongodb",
+        "databricks",
+        "openai",
+        "anthropic",
+        "adobe",
+        "shopify",
+        "block",
+        "workday",
+        "zscaler",
+        "palo alto",
+        "crowdstrike",
+        "splunk",
+        "nutanix"
+      ],
+      "_help_seniorTitleRegex": "What counts as a senior title for the product-company rule.",
+      "seniorTitleRegex": "staff|principal|lead|senior|sr\\.|director"
+    },
+    "evaluate": {
+      "_help": "JD scoring: hard fails first (location pin, travel, domain JD content, low pay ceiling) make the verdict PASS; otherwise +2 per strengths pattern found, -2 per neverClaim term, -3 for a people-management years bar, plus pay.usd.scoreBonus. score >= applyMinScore is APPLY, >= maybeMinScore MAYBE.",
+      "_help_locationPinRegex": "JD phrases that pin the role to a place (hard fail for a remote-only search; local markets skip it). If you want hybrid roles everywhere, empty this list.",
+      "locationPinRegex": [
+        "(must (be located|live|reside|currently reside|be based)|no other candidates will be considered|local (candidates|applicants) only|within \\d+ miles|required to (work|be) on.?site|hybrid[^.\\n]{0,40}\\d\\s*days?|this is (a|an) (hybrid|onsite|on.site)|not a (fully )?remote (role|position))"
+      ],
+      "_help_maxTravelPct": "Travel above this percentage is a hard fail. null disables the check.",
+      "maxTravelPct": 20,
+      "travelLanguageRegex": "travel[^.\\n]{0,60}(weekly|customer sites)",
+      "_help_domainJdRegex": "JD words that mean the job lives in your walled-off domain (default: healthcare); hard fail with domainJdLabel.",
+      "domainJdRegex": "\\b(payer|payor|medicare|medicaid|health plan|clinical|patient|managed care|pharmacy|hedis)\\b",
+      "domainJdLabel": "healthcare JD content",
+      "_help_strengths": "Your strengths, name -> regex over the lowercased JD. Each one found adds 2 points and its name to the why. Rewrite these for your own background; a designer might use \"design systems\": \"\\\\b(design systems?|component library)\\\\b\".",
+      "strengths": {
+        "AI/ML": "\\b(ai|llm|genai|machine learning)\\b",
+        "adoption/change": "\\b(adoption|change management|enablement|transformation)\\b",
+        "cloud": "\\b(cloud|infrastructure|aws|azure|gcp)\\b",
+        "data/dashboards": "\\b(dashboards?|analytics|metrics|kpis?|data.driven|sql)\\b",
+        "global teams": "\\b(offshore|distributed|global teams?|time zones?)\\b",
+        "exec-facing": "\\b(executive|c.level|cto|vp|leadership updates|board)\\b",
+        "PMO/practice": "\\b(pmo|playbooks?|operating (model|mechanisms?)|process improvement|governance)\\b",
+        "cost/budget": "\\b(cost (optimization|reduction)|budget|roi|financial)\\b"
+      },
+      "_help_neverClaim": "EXAMPLE entries: tools or domains you have never worked with (whole-word, lowercase). Each one a JD names costs 2 points and blocks that requirement on the J axis. Replace with your own.",
+      "neverClaim": [
+        "kafka",
+        "kubernetes",
+        "salesforce cpq",
+        "hipaa",
+        "gxp",
+        "clearance"
+      ],
+      "_help_peopleMgmtRegex": "A JD bar for years of people management; group 1 must capture the years. At or above peopleMgmtMinYears it costs 3 points. Raise peopleMgmtMinYears if you have long people-management experience.",
+      "peopleMgmtRegex": "(\\d{1,2})\\+?\\s*years[^.\\n]{0,60}(people|leadership|senior or leadership|managing (pms|project managers|pmo))",
+      "peopleMgmtMinYears": 5,
+      "applyMinScore": 9,
+      "maybeMinScore": 5
+    },
+    "laneRules": {
+      "_help": "Which of your two General resumes (lanes.TAC tactical / lanes.STRAT strategic) a live row gets. STRAT when the title matches strategicTitleRegex, the row is TAILORED, the comp field matches highCompRegex, the company matches strategicCompanyRegex, or a GENERIC row has a seniorishTitleRegex title; TAC otherwise.",
+      "strategicTitleRegex": "principal|staff |head of|director|senior technical program|sr\\.? technical program",
+      "seniorishTitleRegex": "senior|sr\\.?\\b|lead ",
+      "_help_highCompRegex": "CASE-SENSITIVE: comp text of 170K and up (\"175K\", \"$180,000\"). Change the digits to move the bar.",
+      "highCompRegex": "(1[7-9]\\d|[2-9]\\d\\d)[,\\d]*K|\\$(1[7-9]\\d|[2-9]\\d\\d),\\d{3}",
+      "strategicCompanyRegex": [
+        "stripe",
+        "google",
+        "meta",
+        "netflix",
+        "apple",
+        "amazon",
+        "microsoft",
+        "coinbase",
+        "databricks",
+        "snowflake",
+        "affirm",
+        "atlassian",
+        "adobe"
+      ]
+    },
+    "jAxis": {
+      "_help": "J1/J2/J3 tag on the board: share of a JD's requirement lines your Career Bank covers (cover words come from the keyword files of your gate-passed builds, resume-configs/*-kw.json, plus strengths). A line is BLOCKED by a bank never-claim entry, neverClaim, a hard wall, or the gap lists below. tiers: J1 needs score >= J1 and no required blocker, J2 needs >= J2 and at most one.",
+      "tiers": {
+        "J1": 70,
+        "J2": 50
+      },
+      "_help_genericWords": "Words so common in JDs that matching them earns only half credit.",
+      "genericWords": [
+        "ai",
+        "analysis",
+        "business",
+        "cloud",
+        "collaboration",
+        "communication",
+        "communication skills",
+        "cross-functional",
+        "customer",
+        "customers",
+        "data",
+        "delivery",
+        "development",
+        "documentation",
+        "engineering",
+        "execution",
+        "experience",
+        "impact",
+        "leadership",
+        "management",
+        "operations",
+        "organization",
+        "ownership",
+        "planning",
+        "prioritization",
+        "process",
+        "product",
+        "program",
+        "project",
+        "quality",
+        "reporting",
+        "results",
+        "risk",
+        "saas",
+        "software",
+        "stakeholders",
+        "strategy",
+        "support",
+        "team",
+        "teams",
+        "technical",
+        "technology",
+        "tools"
+      ],
+      "_help_strongSingleWords": "Single words distinctive enough to count as a real match (tools and methods you actually use).",
+      "strongSingleWords": [
+        "adoption",
+        "agile",
+        "automation",
+        "confluence",
+        "dashboard",
+        "dashboards",
+        "dependencies",
+        "escalation",
+        "escalations",
+        "excel",
+        "github",
+        "governance",
+        "integration",
+        "integrations",
+        "jira",
+        "kanban",
+        "launch",
+        "launches",
+        "mentoring",
+        "migration",
+        "migrations",
+        "okr",
+        "okrs",
+        "pmo",
+        "powerpoint",
+        "roadmap",
+        "roadmaps",
+        "scrum",
+        "sdlc",
+        "smartsheet",
+        "sql",
+        "tableau"
+      ],
+      "_help_languagesNotSpoken": "Languages you do NOT speak; a JD requiring one is a gap. Remove any you speak.",
+      "languagesNotSpoken": [
+        "german",
+        "spanish",
+        "italian",
+        "dutch",
+        "portuguese",
+        "polish",
+        "hungarian",
+        "romanian",
+        "swedish",
+        "danish",
+        "norwegian",
+        "finnish",
+        "japanese",
+        "mandarin",
+        "chinese",
+        "korean",
+        "arabic",
+        "hebrew",
+        "russian",
+        "turkish",
+        "greek",
+        "ukrainian",
+        "french"
+      ],
+      "_help_credentialsRequiredNotHeld": "Certifications a JD may demand that you do NOT hold (a gap unless you hold one of credentialsHeld in the same line).",
+      "credentialsRequiredNotHeld": [
+        "pgmp",
+        "cissp",
+        "cism",
+        "cisa",
+        "itil",
+        "six sigma",
+        "prince2",
+        "cpa",
+        "cfa"
+      ],
+      "_help_credentialsHeld": "Certifications you DO hold, lowercase, e.g. [\"pmp\", \"csm\"]. Empty until you add yours.",
+      "credentialsHeld": [],
+      "_help_degreeFieldsLacking": "Degree fields you do NOT have: a JD requiring one without \"or equivalent\" is a gap. Remove your own field.",
+      "degreeFieldsLacking": [
+        "computer science",
+        "engineering",
+        "mathematics",
+        "statistics",
+        "finance",
+        "accounting",
+        "life sciences",
+        "physics",
+        "data science"
+      ],
+      "_help_yearsBarRegex": "A years-of-experience bar above yours (default 15+ years) is a gap, reported with yearsBarLabel.",
+      "yearsBarRegex": "\\b(1[5-9]|[2-9]\\d)\\+?\\s*years",
+      "yearsBarLabel": "15+ years bar",
+      "_help_domainGaps": "Domains you have no experience in; a requirement naming one is a gap. Starting point, edit freely.",
+      "domainGaps": [
+        "crypto\\w*",
+        "blockchain",
+        "stablecoin",
+        "web3",
+        "defi\\b",
+        "digital assets?",
+        "\\bbsa\\b",
+        "\\baml\\b",
+        "anti[- ]money",
+        "ofac",
+        "\\bkyc\\b",
+        "financial crimes",
+        "(leading|managing|running) hr\\b",
+        "\\bhr (teams?|transformation|programs?|operations|systems|business partners?)",
+        "\\bhris\\b",
+        "employment law",
+        "(recruiting|recruitment|talent acquisition) (operations|programs?|vendors?|teams?|leadership|strategy)",
+        "management consulting",
+        "big 4"
+      ],
+      "_help_registryLowercaseSkills": "Lowercase phrases in your Career Bank never-claim registry that are SKILLS (the registry also holds wording bans, which must not count as JD gaps). Capitalized entries and acronyms count as skills automatically.",
+      "registryLowercaseSkills": [],
+      "_help_registryCredentialPhrases": "Registry entries that are certifications: a JD line listing alternatives you hold (\"PMP or SAFe\") does not block on them.",
+      "registryCredentialPhrases": [
+        "SAFe"
+      ]
+    }
+  },
+  "pay": {
+    "_help": "How pay is read from JDs and tiered on the board. USD is built in; other currencies are listed here.",
+    "_help_usd": "minCeiling: a USD range whose top is below this is a hard fail. scoreBonus: [floor, points] pairs, the highest floor the range top reaches adds its points.",
+    "usd": {
+      "minCeiling": 120000,
+      "scoreBonus": [
+        [
+          200000,
+          2
+        ],
+        [
+          160000,
+          1
+        ]
+      ]
+    },
+    "_help_tiers": "Board P tags per region: comp at or above p1 is P1 (send first), at or above p2 is P2, else P3. Hourly bands count as 2,000 hours a year. Add \"EU\": {\"p1\": ..., \"p2\": ...} if you search outside the US.",
+    "tiers": {
+      "US": {
+        "p1": 150000,
+        "p2": 130000
+      }
+    },
+    "_help_currencies": "Non-USD currencies to mine from JDs. code = display code; markers = regexes for how it is written; perEur = units per 1 EUR (bands are compared, and converted currencies tiered, as annual EUR); optional monthly = {\"words\": regex, \"below\": n} for currencies usually quoted per month (a band under n, or with a month word nearby, is shown /mo and counted x12); optional boardMatch = regex the board uses to spot this currency in a comp field (default: the markers). Example: {\"code\": \"PLN\", \"markers\": [\"PLN\", \"z\\u0142\"], \"perEur\": 4.3, \"monthly\": {\"words\": \"month|miesi\", \"below\": 100000}}.",
+    "currencies": [
+      {
+        "code": "EUR",
+        "markers": [
+          "EUR",
+          "€",
+          "Euros?"
+        ],
+        "perEur": 1
+      },
+      {
+        "code": "GBP",
+        "markers": [
+          "GBP",
+          "£"
+        ],
+        "perEur": 1
+      }
+    ],
+    "_help_rangeSeparators": "Regexes that join the two ends of a non-USD range (add a local word for \"to\" if your market uses one).",
+    "rangeSeparators": [
+      "-",
+      "\\u2013",
+      "\\u2014",
+      "\\bto\\b"
+    ]
+  },
+  "board": {
+    "_help": "The HTML job board (Board_Spec.md is its contract).",
+    "title": "Job Board",
+    "_help_staffingFlagRegex": "Company names that get the STAFF tag and sort after real employers (consultancies, staffing agencies, reposters). Presentation only; never changes calls or lanes.",
+    "staffingFlagRegex": [
+      "staffing",
+      "recruit",
+      "consultanc",
+      "consulting",
+      "talent\\b",
+      "\\bagency\\b",
+      "\\baquent\\b",
+      "\\bteksystems\\b",
+      "\\binsight global\\b",
+      "\\brobert half\\b",
+      "\\brandstad\\b",
+      "\\badecco\\b",
+      "\\bkforce\\b",
+      "\\bjobot\\b",
+      "\\bcybercoders\\b",
+      "\\bmotion recruitment\\b",
+      "\\bapex systems\\b",
+      "\\baston carter\\b",
+      "\\bcollabera\\b",
+      "\\bmindlance\\b",
+      "\\bharnham\\b",
+      "\\bhays\\b",
+      "\\bmichael page\\b",
+      "\\bswooped\\b",
+      "\\bladders\\b",
+      "\\blensa\\b",
+      "\\bdice\\b",
+      "\\bget it\\b",
+      "\\bjobs via\\b",
+      "\\bjobright\\b",
+      "\\blhh\\b",
+      "\\blee hecht\\b",
+      "\\bepam\\b",
+      "\\bvirtusa\\b",
+      "\\bcognizant\\b",
+      "\\bcapgemini\\b",
+      "\\baccenture\\b",
+      "\\bdeloitte\\b",
+      "\\binfosys\\b",
+      "\\bwipro\\b",
+      "\\bhcl\\b",
+      "\\btcs\\b",
+      "\\bntt data\\b",
+      "\\bsearch wizards\\b",
+      "\\bphyton\\b",
+      "\\bmatrix usa\\b",
+      "\\b52 limited\\b",
+      "\\btrace3\\b",
+      "\\bcurate partners\\b",
+      "\\bastreya\\b",
+      "\\bkelly\\b",
+      "\\bnextgen\\b",
+      "\\bconfidential\\b",
+      "\\bcrossover\\b"
+    ]
+  }
+}

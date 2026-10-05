@@ -1,0 +1,13 @@
+# Your copy of this kit holds your career and your job search, and the morning routine commits
+# that data every day on purpose (git history is the audit trail). Keep your copy PRIVATE:
+# create it with "Use this template" and choose Private, or never push it anywhere.
+
+# Dependencies (run `npm install` in resume-workspace/)
+node_modules/
+
+# Python caches and Office lock files
+__pycache__/
+~$*
+
+# Smoke test output (rendered from the example config)
+resume-workspace/example-output/

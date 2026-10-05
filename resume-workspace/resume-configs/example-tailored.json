@@ -1,0 +1,125 @@
+{
+  "schemaVersion": "1.0",
+  "company": "Adventure Works",
+  "role": "Senior Program Manager, Platform Delivery (invented example posting; see inputs/example-jd.txt)",
+  "jdFile": "inputs/example-jd.txt",
+  "keywordFile": "resume-configs/example-tailored-kw.json",
+  "outputFileName": "Alex_Example_Tailored.docx",
+  "headline": "Senior Program Manager  |  Platform Delivery & Cloud Migration  |  PMP  |  PSM",
+  "candidate": {
+    "name": "Alex Example",
+    "contact": [
+      {
+        "text": "alex.example@example.com",
+        "link": "mailto:alex.example@example.com"
+      },
+      {
+        "text": "(555) 010-0142"
+      },
+      {
+        "text": "linkedin.com/in/alex-example",
+        "link": "https://www.linkedin.com/in/alex-example"
+      }
+    ]
+  },
+  "summary": {
+    "text": "Senior program manager who takes logistics and cloud platform work from plan to launch across up to 9 engineering teams. Keeps each effort on one plan, one dependency map, and one status review, so builders stay focused and leadership sees risk early. Results: 140 services migrated 6 weeks early, 61% weekly use of an AI coding assistant among 320 engineers, and production rollbacks cut from 7 to 2 a year."
+  },
+  "deliberateGaps": {
+    "Kubernetes": "Nice-to-have in the JD. Not in the bank: Alex coordinated the cloud migration but never operated container platforms. Carried instead: the 140-service migration across 9 teams."
+  },
+  "experienceSections": [
+    {
+      "heading": "PROFESSIONAL EXPERIENCE",
+      "jobs": [
+        {
+          "company": "Northwind Logistics",
+          "title": "Senior Program Manager",
+          "dates": "March 2021 - Present",
+          "bullets": [
+            "Moved 140 warehouse services to the cloud across 9 engineering teams, finishing 6 weeks ahead of an 18-month plan.",
+            "Ran a release readiness review for 22 quarterly releases, and production rollbacks fell from 7 in the first year to 2 in the second.",
+            "Took an AI coding assistant to 61% weekly active use among 320 engineers within 5 months, tracked on a monthly adoption dashboard.",
+            "Replaced 4 separate status reports with one weekly program review, cutting reporting time for team leads from 3 hours to 1 hour per week.",
+            "Managed a $2.3M annual vendor budget across 3 carrier-integration partners and renegotiated 2 contracts for a 12% cost reduction."
+          ],
+          "bankAnchors": {
+            "0": [
+              "Led the migration of 140 warehouse services",
+              "to the cloud across 9 engineering teams, finishing 6 weeks ahead of the 18-month plan"
+            ],
+            "1": "Ran a release readiness review for 22 quarterly releases, and production rollbacks fell from 7 in the first year to 2 in the second.",
+            "2": [
+              "Rolled out an AI coding assistant to 320 engineers",
+              "reached 61% weekly active use within 5 months",
+              "monthly adoption dashboard"
+            ],
+            "3": "Replaced 4 separate status reports with one weekly program review, cutting reporting time for team leads from 3 hours to 1 hour per week.",
+            "4": "Managed a $2.3M annual vendor budget across 3 carrier-integration partners and renegotiated 2 contracts for a 12% cost reduction."
+          }
+        },
+        {
+          "company": "Contoso Cloud",
+          "title": "Program Manager",
+          "dates": "June 2017 - February 2021",
+          "bullets": [
+            "Introduced a cross-team dependency tracker for 6 product teams that cut blocked sprint items from 18% to 7% over two quarters.",
+            "Coordinated the launch of a self-service billing portal for 4,000 business customers, cutting billing support tickets by 35% in the first quarter.",
+            "Coordinated incident reviews for a platform with a 99.95% availability target, closing action items within 30 days in 9 of 10 cases."
+          ],
+          "bankAnchors": {
+            "0": "Introduced a cross-team dependency tracker for 6 product teams that cut blocked sprint items from 18% to 7% over two quarters.",
+            "1": "Coordinated the launch of a self-service billing portal for 4,000 business customers, cutting billing support tickets by 35% in the first quarter.",
+            "2": "Coordinated incident reviews for a platform with a 99.95% availability target, closing action items within 30 days in 9 of 10 cases."
+          }
+        },
+        {
+          "company": "Fabrikam Health",
+          "title": "Project Coordinator, then Project Manager",
+          "dates": "August 2013 - May 2017",
+          "bullets": [
+            "Delivered a scheduling system upgrade for 12 clinics on time and $80K under a $1.1M budget.",
+            "Trained 260 clinic staff on the new scheduling workflow in 6 weeks through 14 classroom sessions."
+          ],
+          "bankAnchors": {
+            "0": "Delivered a scheduling system upgrade for 12 clinics on time and $80K under a $1.1M budget.",
+            "1": "Trained 260 clinic staff on the new scheduling workflow in 6 weeks through 14 classroom sessions."
+          }
+        }
+      ]
+    }
+  ],
+  "skills": [
+    [
+      "Program delivery",
+      "Program management, cloud migration, release management, dependency management, cross-functional planning"
+    ],
+    [
+      "Risk and stakeholders",
+      "Risk management, stakeholder management, vendor management, budget ownership"
+    ],
+    [
+      "Reporting and tools",
+      "Status reporting, Jira, Confluence, Smartsheet, Power BI"
+    ],
+    [
+      "AI enablement",
+      "AI adoption programs, usage dashboards, team training"
+    ],
+    [
+      "Methods",
+      "Scrum, Kanban boards, phase-gate release reviews"
+    ]
+  ],
+  "certifications": [
+    "Project Management Professional (PMP), PMI",
+    "Professional Scrum Master (PSM), Scrum.org"
+  ],
+  "education": [
+    {
+      "institution": "Example State University",
+      "degree": "BS, Industrial Engineering",
+      "dates": "2013"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+Adventure Works: Senior Program Manager, Platform Delivery
+(Invented example posting for the job-search kit. The company and the role are fictional.)
+Location: Remote, United States
+
+About the team
+Adventure Works builds route-planning and fleet software for regional delivery companies. Our platform group is moving its remaining data-center workloads to a public cloud provider and wants one person to own the plan from start to finish.
+
+What you will do
+- Own program management for the cloud migration, from kickoff through final cutover.
+- Keep a single schedule across many squads and surface dependency risks before they stall a sprint.
+- Run release management for monthly platform releases with clear go/no-go criteria.
+- Lead stakeholder management with engineering directors, finance, and our carrier partners.
+- Track spend against budget and handle vendor management for two hosting partners.
+- Drive AI adoption across the engineering group and report usage to leadership.
+- Write short status reporting that executives read.
+
+What you bring
+- 7+ years of program or project management in software companies.
+- Experience leading cross-functional work with 5 or more teams.
+- Comfort with Jira and dashboard tools.
+- Strong risk management habits.
+- Nice to have: Kubernetes exposure, SAFe certification.
+
+Compensation: $150,000 to $175,000 base salary (invented figure).
